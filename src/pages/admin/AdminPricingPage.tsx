@@ -212,7 +212,7 @@ export default function AdminPricingPage() {
                 />
               ))}
               <AddPlanCard
-                categoryId={cat.id}
+                //categoryId={cat.id}
                 onAdd={async (shots, price, disc) => {
                   await createPlan(cat.id, shots, price, disc);
                   notify(`Added ${cat.name} ${shots}-shot`);
@@ -360,10 +360,9 @@ function PlanEditor({
 }
 
 function AddPlanCard({
-  categoryId,
   onAdd,
 }: {
-  categoryId: number;
+  //categoryId: number;
   onAdd: (shots: number, price: number, disc: number) => Promise<void>;
 }) {
   const [shots, setShots] = useState("");
