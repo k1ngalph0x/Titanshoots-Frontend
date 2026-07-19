@@ -155,8 +155,8 @@ export default function AdminAnalyticsPage() {
                       fontFamily: "var(--font-mono)",
                       fontSize: 12,
                     }}
-                    formatter={(v: number) => [
-                      `₹${v.toLocaleString("en-IN")}`,
+                    formatter={(v) => [
+                      `₹${Number(v).toLocaleString("en-IN")}`,
                       "Revenue",
                     ]}
                   />
@@ -208,8 +208,8 @@ export default function AdminAnalyticsPage() {
                         fontFamily: "var(--font-mono)",
                         fontSize: 12,
                       }}
-                      formatter={(v: number) => [
-                        `₹${v.toLocaleString("en-IN")}`,
+                      formatter={(v) => [
+                        `₹${Number(v).toLocaleString("en-IN")}`,
                         "Revenue",
                       ]}
                     />

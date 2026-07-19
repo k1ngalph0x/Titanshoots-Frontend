@@ -8,7 +8,7 @@ import TechFrame from "../components/TechFrame";
 export default function ConfirmationPage() {
   const { token } = useParams();
   const [status, setStatus] = useState<BookingStatus | null>(null);
-  const [elapsed, setElapsed] = useState(0);
+  const [, setElapsed] = useState(0);
   const pollRef = useRef<number | null>(null);
 
   useEffect(() => {
