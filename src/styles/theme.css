@@ -1,0 +1,30 @@
+:root {
+  /* Base — warm paper, not pure white */
+  --paper: #f2f0ea;
+  --surface: #ffffff;
+  --surface-dim: #e9e6de;
+
+  /* Ink */
+  --ink: #14131a;
+  --ink-soft: #4a4854;
+  --ink-muted: #8a8794;
+
+  /* Lines — crisp, technical */
+  --line: #cbc8bf;
+  --line-strong: #14131a;
+
+  /* Hot accent */
+  --accent: #f0164a;
+  --accent-dim: #d1013a;
+  --accent-wash: #fde7ec;
+
+  /* Status */
+  --success: #12855a;
+  --danger: #f0164a;
+  --warning: #b45309;
+
+  /* Technical */
+  --cut: 14px;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}

@@ -1,0 +1,105 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap");
+@import "tailwindcss";
+@import "./styles/theme.css";
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-display);
+  min-height: 100vh;
+}
+
+.hazard {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--accent) 0 10px,
+    transparent 10px 20px
+  );
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* mono technical label */
+.tech-label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.7rem;
+}
+
+/* angular clipped corner (top-right + bottom-left cut) */
+.clip-corner {
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--cut)) 0,
+    100% var(--cut),
+    100% 100%,
+    var(--cut) 100%,
+    0 calc(100% - var(--cut))
+  );
+}
+
+/* hazard stripes that march */
+.hazard {
+  background-size: 28.28px 28.28px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hazard-live {
+    animation: hazard-march 0.8s linear infinite;
+  }
+  @keyframes hazard-march {
+    to {
+      background-position: 28.28px 0;
+    }
+  }
+
+  /* scanline sweep across a frame */
+  .scanline {
+    position: relative;
+    overflow: hidden;
+  }
+  .scanline::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(transparent, var(--accent-wash), transparent);
+    transform: translateY(-100%);
+    animation: scan 3.2s ease-in-out infinite;
+  }
+  @keyframes scan {
+    0%,
+    60% {
+      transform: translateY(-100%);
+    }
+    80%,
+    100% {
+      transform: translateY(200%);
+    }
+  }
+
+  /* blinking live dot */
+  .blink {
+    animation: blink 1.4s steps(1) infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0.25;
+    }
+  }
+
+  /* accent pulse for selected state */
+  @keyframes accent-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 var(--accent);
+    }
+    50% {
+      box-shadow: 0 0 0 3px var(--accent-wash);
+    }
+  }
+}
