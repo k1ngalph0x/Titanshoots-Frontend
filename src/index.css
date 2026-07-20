@@ -24,7 +24,6 @@ body {
   background-size: 44px 44px;
 }
 
-/* mono technical label */
 .tech-label {
   font-family: var(--font-mono);
   text-transform: uppercase;
@@ -32,7 +31,6 @@ body {
   font-size: 0.7rem;
 }
 
-/* angular clipped corner (top-right + bottom-left cut) */
 .clip-corner {
   clip-path: polygon(
     0 0,
@@ -44,7 +42,6 @@ body {
   );
 }
 
-/* hazard stripes that march */
 .hazard {
   background-size: 28.28px 28.28px;
 }
@@ -58,7 +55,6 @@ body {
     }
   }
 
-  /* scanline sweep across a frame */
   .scanline {
     position: relative;
     overflow: hidden;

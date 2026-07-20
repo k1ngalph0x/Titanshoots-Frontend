@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
+import { Divider } from "./Divider";
 
 export default function SiteHeader() {
   return (
     <>
-      <div className="hazard hazard-live h-2 w-full" />
+      <Divider variant="status" />
       <header
         className="flex items-center justify-between px-6 py-4"
         style={{ borderBottom: "1px solid var(--line)" }}

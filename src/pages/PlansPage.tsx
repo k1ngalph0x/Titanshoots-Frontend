@@ -1,25 +1,54 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { fetchCatalog, type Catalog } from "../api/client";
 import TechFrame from "../components/TechFrame";
+import { Divider } from "../components/Divider";
 import { useCountUp } from "../hooks/useCountUp";
 import { useNavigate } from "react-router-dom";
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
-};
-const item = {
-  hidden: { opacity: 0, y: 16, clipPath: "inset(0 100% 0 0)" },
-  show: {
-    opacity: 1,
-    y: 0,
-    clipPath: "inset(0 0% 0 0)",
-    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const },
-  },
-};
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+function Reticle({ size = 40 }: { size?: number }) {
+  const c = size / 2;
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      aria-hidden="true"
+      style={{ display: "block" }}
+    >
+      <circle
+        cx={c}
+        cy={c}
+        r={size * 0.34}
+        fill="none"
+        stroke="var(--accent)"
+        strokeWidth="1"
+      />
+      <line x1={c} y1="2" x2={c} y2={size * 0.24} stroke="var(--accent)" />
+      <line
+        x1={c}
+        y1={size - 2}
+        x2={c}
+        y2={size * 0.76}
+        stroke="var(--accent)"
+      />
+      <line x1="2" y1={c} x2={size * 0.24} y2={c} stroke="var(--accent)" />
+      <line
+        x1={size - 2}
+        y1={c}
+        x2={size * 0.76}
+        y2={c}
+        stroke="var(--accent)"
+      />
+      <circle cx={c} cy={c} r="2" fill="var(--accent)" />
+    </svg>
+  );
+}
 
 export default function PlansPage() {
+  const reduce = !!useReducedMotion();
   const [catalog, setCatalog] = useState<Catalog | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
@@ -31,28 +60,34 @@ export default function PlansPage() {
       .catch(() => setError("Could not load plans."));
   }, []);
 
+  const container: Variants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
+  };
+  const item: Variants = {
+    hidden: {
+      opacity: 0,
+      y: reduce ? 0 : 16,
+      clipPath: reduce ? "none" : "inset(0 100% 0 0)",
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      clipPath: "inset(0 0% 0 0)",
+      transition: { duration: 0.4, ease: EASE },
+    },
+  };
+
   return (
     <div className="min-h-screen">
-      <div className="hazard hazard-live h-2 w-full" />
-      <div
-        className="flex items-center justify-between px-6 py-2 text-xs"
-        style={{
-          borderBottom: "1px solid var(--line)",
-          color: "var(--ink-muted)",
-        }}
-      >
-        <span className="tech-label">TitanShoots // Booking Terminal</span>
-        <span
-          className="tech-label flex items-center gap-1.5"
-          style={{ color: "var(--accent)" }}
-        >
-          <span className="blink">◆</span> Live
-        </span>
-      </div>
+      <Divider
+        variant="status"
+        label="TitanShoots · Booking terminal · Bookings open"
+      />
 
-      <header className="max-w-5xl mx-auto px-6 pt-14 pb-8">
+      <header className="mx-auto max-w-5xl px-6 pb-8 pt-14">
         <motion.div
-          initial={{ opacity: 0, x: -12 }}
+          initial={{ opacity: 0, x: reduce ? 0 : -12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
           className="tech-label mb-3"
@@ -61,12 +96,15 @@ export default function PlansPage() {
           ※ Select your loadout
         </motion.div>
         <motion.h1
-          initial={{ opacity: 0, clipPath: "inset(0 100% 0 0)" }}
+          initial={{
+            opacity: 0,
+            clipPath: reduce ? "none" : "inset(0 100% 0 0)",
+          }}
           animate={{ opacity: 1, clipPath: "inset(0 0% 0 0)" }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="text-6xl font-bold tracking-tight leading-none"
+          transition={{ duration: 0.7, ease: EASE }}
+          className="text-6xl font-bold uppercase leading-none tracking-tight"
         >
-          TITAN<span style={{ color: "var(--accent)" }}>SHOOTS</span>
+          Titan<span style={{ color: "var(--accent)" }}>Shoots</span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
@@ -80,29 +118,41 @@ export default function PlansPage() {
         </motion.p>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 pb-16">
+      <main className="mx-auto max-w-5xl px-6 pb-16">
         {error && (
-          <div className="tech-label" style={{ color: "var(--danger)" }}>
+          <div
+            role="alert"
+            className="tech-label clip-corner p-4"
+            style={{
+              color: "var(--danger)",
+              border: "1px solid var(--danger)",
+              background: "var(--accent-wash)",
+            }}
+          >
             ⚠ {error}
           </div>
         )}
+
         {!catalog && !error && (
           <div
-            className="tech-label blink"
+            className="flex items-center gap-3 py-8"
             style={{ color: "var(--ink-muted)" }}
           >
-            ◆ Loading terminal…
+            <span className="blink">
+              <Reticle size={22} />
+            </span>
+            <span className="tech-label">Loading terminal…</span>
           </div>
         )}
 
         {catalog?.categories.map((cat, ci) => (
           <section key={cat.id} className="mb-12">
             <motion.div
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: reduce ? 0 : 8 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4 }}
-              className="flex items-center gap-4 mb-5"
+              className="mb-5 flex items-center gap-4"
             >
               <span
                 className="tech-label"
@@ -141,6 +191,7 @@ export default function PlansPage() {
                     discountPercent={plan.discount_percent}
                     discountedPrice={plan.discounted_display}
                     selected={selected === plan.id}
+                    reduce={reduce}
                     onSelect={() => {
                       setSelected(plan.id);
                       setTimeout(() => navigate(`/checkout/${plan.id}`), 280);
@@ -152,31 +203,25 @@ export default function PlansPage() {
           </section>
         ))}
 
-        {/* {catalog && catalog.group_discounts.length > 0 && (
+        {/* 
+        {catalog && catalog.group_discounts.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: reduce ? 0 : 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <TechFrame className="p-5 scanline">
+            <TechFrame className="p-5">
               <div className="flex items-center gap-4">
-                <span className="hazard hazard-live w-10 h-10 clip-corner shrink-0" />
+                <span className="shrink-0"><Reticle size={40} /></span>
                 <div>
-                  <div
-                    className="tech-label"
-                    style={{ color: "var(--ink-muted)" }}
-                  >
+                  <div className="tech-label" style={{ color: "var(--ink-muted)" }}>
                     Group booking
                   </div>
                   <div className="text-lg font-medium">
                     Book together and save up to{" "}
                     <span style={{ color: "var(--success)" }}>
-                      {
-                        catalog.group_discounts[
-                          catalog.group_discounts.length - 1
-                        ].discount_display
-                      }
+                      {catalog.group_discounts[catalog.group_discounts.length - 1].discount_display}
                     </span>
                   </div>
                 </div>
@@ -186,7 +231,7 @@ export default function PlansPage() {
         )} */}
       </main>
 
-      <div className="hazard hazard-live h-2 w-full" />
+      <Divider variant="rule" />
     </div>
   );
 }
@@ -198,6 +243,7 @@ function PlanCard({
   discountPercent,
   discountedPrice,
   selected,
+  reduce,
   onSelect,
 }: {
   prefix: string;
@@ -206,6 +252,7 @@ function PlanCard({
   discountPercent: number;
   discountedPrice: string;
   selected: boolean;
+  reduce: boolean;
   onSelect: () => void;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -216,12 +263,14 @@ function PlanCard({
       onClick={onSelect}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      whileHover={{ y: -6 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={reduce ? undefined : { y: -6 }}
+      whileTap={reduce ? undefined : { scale: 0.98 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      className="text-left w-full"
+      aria-pressed={selected}
+      aria-label={`${prefix} — ${shots} shots, ${discountPercent > 0 ? discountedPrice : price}`}
+      className="w-full text-left"
       style={
-        selected
+        selected && !reduce
           ? { animation: "accent-pulse 1.6s ease-in-out infinite" }
           : undefined
       }
@@ -235,7 +284,9 @@ function PlanCard({
             {prefix}-{shots}
           </span>
           <motion.span
-            animate={{ x: hovered ? 3 : 0, y: hovered ? -3 : 0 }}
+            animate={
+              reduce ? undefined : { x: hovered ? 3 : 0, y: hovered ? -3 : 0 }
+            }
             style={{
               color: selected || hovered ? "var(--accent)" : "var(--ink-muted)",
             }}
@@ -253,16 +304,26 @@ function PlanCard({
           </span>
         </div>
 
+        {/* round counter — shots-as-tier, echoes the hero's magazine bar */}
+        <div className="mt-4 flex gap-1" aria-hidden="true">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <span
+              key={i}
+              className="h-1 flex-1"
+              style={{
+                background:
+                  i < Math.round((count / Math.max(shots, 1)) * 8)
+                    ? "var(--accent)"
+                    : "var(--line)",
+              }}
+            />
+          ))}
+        </div>
+
         <div
-          className="mt-4 pt-4 flex items-center justify-between"
-          style={{ borderTop: "1px solid var(--line)" }}
+          className="mt-4 flex items-center justify-between border-t pt-4"
+          style={{ borderColor: "var(--line)" }}
         >
-          {/* <span
-            className="text-2xl font-bold"
-            style={{ color: "var(--accent)" }}
-          >
-            {price}
-          </span> */}
           {discountPercent > 0 ? (
             <span className="flex items-baseline gap-2">
               <span
