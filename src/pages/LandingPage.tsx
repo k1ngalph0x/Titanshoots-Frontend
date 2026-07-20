@@ -432,7 +432,7 @@ export default function LandingPage() {
                 decoding="async"
                 className="w-full select-none"
                 draggable={false}
-                style={{ mixBlendMode: "multiply" }}
+                //style={{ mixBlendMode: "multiply" }}
               />
               <CornerBrackets />
               <div className="absolute right-2 top-2">
@@ -496,7 +496,7 @@ export default function LandingPage() {
               decoding="async"
               className="w-full select-none"
               draggable={false}
-              style={{ mixBlendMode: "multiply" }}
+              //style={{ mixBlendMode: "multiply" }}
             />
             <CornerBrackets />
           </motion.figure>
@@ -648,7 +648,7 @@ export default function LandingPage() {
                 decoding="async"
                 className="w-full select-none"
                 draggable={false}
-                style={{ mixBlendMode: "multiply" }}
+                //style={{ mixBlendMode: "multiply" }}
               />
             </motion.figure>
           </div>

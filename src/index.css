@@ -99,3 +99,26 @@ body {
     }
   }
 }
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--surface-dim);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface-dim);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border: 2px solid var(--surface-dim);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-dim);
+}
+::-webkit-scrollbar-corner {
+  background: var(--surface-dim);
+}
