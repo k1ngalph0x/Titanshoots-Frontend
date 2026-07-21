@@ -226,7 +226,7 @@ export default function AdminAnalyticsPage() {
                 </ResponsiveContainer>
               )}
             </TechFrame>
-            <ReportDownload />
+
             <TechFrame className="p-5">
               <div
                 className="tech-label mb-4"
@@ -277,6 +277,8 @@ export default function AdminAnalyticsPage() {
               </div>
             </TechFrame>
           </div>
+
+          <ReportDownload />
         </>
       )}
     </div>
