@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { api } from "../../api/client";
 import {
   AreaChart,
   Area,
@@ -225,7 +226,7 @@ export default function AdminAnalyticsPage() {
                 </ResponsiveContainer>
               )}
             </TechFrame>
-
+            <ReportDownload />
             <TechFrame className="p-5">
               <div
                 className="tech-label mb-4"
@@ -279,5 +280,75 @@ export default function AdminAnalyticsPage() {
         </>
       )}
     </div>
+  );
+}
+function ReportDownload() {
+  const [period, setPeriod] = useState<"week" | "month" | "year">("month");
+  const [on, setOn] = useState(new Date().toISOString().split("T")[0]);
+
+  function download() {
+    const url = `${api.defaults.baseURL}/admin/reports/pdf?period=${period}&on=${on}`;
+    window.open(url, "_blank"); // cookie auth rides along; opens the PDF
+  }
+
+  return (
+    <TechFrame className="p-5 mt-6">
+      <div className="tech-label mb-4" style={{ color: "var(--ink-muted)" }}>
+        Download report (PDF)
+      </div>
+      <div className="flex flex-wrap items-end gap-3">
+        <div className="flex gap-1">
+          {(["week", "month", "year"] as const).map((p) => (
+            <button
+              key={p}
+              onClick={() => setPeriod(p)}
+              className="px-4 py-2 tech-label clip-corner"
+              style={{
+                background: period === p ? "var(--accent)" : "transparent",
+                color: period === p ? "#fff" : "var(--ink-soft)",
+                border: `1px solid ${period === p ? "var(--accent)" : "var(--line)"}`,
+              }}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+        <div>
+          <label
+            className="tech-label block mb-1.5"
+            style={{ color: "var(--ink-muted)" }}
+          >
+            Any date in period
+          </label>
+          <input
+            type="date"
+            value={on}
+            onChange={(e) => setOn(e.target.value)}
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--line)",
+              color: "var(--ink)",
+              padding: "0.55rem 0.8rem",
+              fontFamily: "var(--font-display)",
+            }}
+          />
+        </div>
+        <button
+          onClick={download}
+          className="px-6 py-2.5 clip-corner tech-label font-bold"
+          style={{
+            background: "var(--accent)",
+            color: "#fff",
+            letterSpacing: "0.1em",
+          }}
+        >
+          Download →
+        </button>
+      </div>
+      <p className="tech-label mt-3" style={{ color: "var(--ink-muted)" }}>
+        Pick any date in the target {period} — the report covers that whole{" "}
+        {period}.
+      </p>
+    </TechFrame>
   );
 }
