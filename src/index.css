@@ -122,3 +122,76 @@ body {
 ::-webkit-scrollbar-corner {
   background: var(--surface-dim);
 }
+
+/* Native crosshair — thematic, zero accessibility cost, scoped to the landing page */
+.range-cursor {
+  cursor: crosshair;
+}
+.range-cursor a,
+.range-cursor button,
+.range-cursor [role="button"] {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.dot-matrix {
+  background-image: radial-gradient(currentColor 1px, transparent 1.2px);
+  background-size: 5px 5px;
+}
+
+.hatch {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    currentColor 0 1px,
+    transparent 1px 7px
+  );
+}
+
+.type-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--line);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .grid-bg {
+    animation: grid-drift 26s linear infinite;
+  }
+  @keyframes grid-drift {
+    to {
+      background-position: 44px 44px;
+    }
+  }
+
+  .trace-rect {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    stroke-dasharray: 60 940;
+    opacity: 0.75;
+    animation: trace 6s linear infinite;
+    animation-delay: calc(var(--i, 0) * 1.4s);
+  }
+  @keyframes trace {
+    to {
+      stroke-dashoffset: -1000;
+    }
+  }
+}

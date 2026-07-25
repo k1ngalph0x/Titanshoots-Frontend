@@ -1,30 +1,50 @@
 :root {
-  /* Base — warm paper, not pure white */
+  /* Base — warm paper, unchanged */
   --paper: #f2f0ea;
+  --paper-deep: #e7e4db;
   --surface: #ffffff;
   --surface-dim: #e9e6de;
 
-  /* Ink */
   --ink: #14131a;
   --ink-soft: #4a4854;
   --ink-muted: #8a8794;
 
-  /* Lines — crisp, technical */
   --line: #cbc8bf;
   --line-strong: #14131a;
 
-  /* Hot accent */
+  /* Channel 1 — action */
   --accent: #f0164a;
   --accent-dim: #d1013a;
   --accent-wash: #fde7ec;
 
-  /* Status */
+  /* Channel 2 — status. Lifted from the rig buckles in the art. */
+  --cyan: #0bb3a6;
+  --cyan-dim: #078a80;
+  --cyan-wash: #ddf4f1;
+
   --success: #12855a;
   --danger: #f0164a;
   --warning: #b45309;
 
-  /* Technical */
   --cut: 14px;
   --font-display: "Space Grotesk", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+}
+
+/* Scoped inversion — every component reading var(--ink) etc. just works.
+   NOT named .invert: Tailwind v4 ships an `invert` filter utility. */
+.plate-dark {
+  --paper: #100f15;
+  --paper-deep: #0a0910;
+  --surface: #191821;
+  --surface-dim: #22212c;
+  --ink: #f2f0ea;
+  --ink-soft: #a9a6b3;
+  --ink-muted: #6f6c7a;
+  --line: #2c2a37;
+  --line-strong: #f2f0ea;
+  --accent-wash: #37101c;
+  --cyan-wash: #06322e;
+  background: var(--paper);
+  color: var(--ink);
 }
