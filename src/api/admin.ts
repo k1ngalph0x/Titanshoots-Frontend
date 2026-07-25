@@ -229,3 +229,18 @@ export async function updatePlan(
 export async function deletePlan(id: number) {
   return api.delete(`/admin/plans/${id}`);
 }
+
+export async function updateBooking(
+  id: number,
+  payload: Record<string, any>,
+): Promise<BookingItem> {
+  const { data } = await api.patch<BookingItem>(
+    `/admin/bookings/${id}`,
+    payload,
+  );
+  return data;
+}
+export async function cancelBooking(id: number): Promise<BookingItem> {
+  const { data } = await api.post<BookingItem>(`/admin/bookings/${id}/cancel`);
+  return data;
+}

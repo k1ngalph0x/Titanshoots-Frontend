@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+
 import {
   fetchBookings,
   verifyBooking,
+  cancelBooking,
   type BookingItem,
 } from "../../api/admin";
 import TechFrame from "../../components/TechFrame";
 import CashBookingModal from "../../components/CashBookingModal";
+import EditBookingModal from "./EditBookingModal";
 const PAGE = 50;
 const FILTERS = [
   { key: "", label: "All" },
@@ -21,6 +24,7 @@ export default function AdminBookingsPage() {
   const [rows, setRows] = useState<BookingItem[]>([]);
   const [state, setState] = useState("");
   const [q, setQ] = useState("");
+  const [editing, setEditing] = useState<BookingItem | null>(null);
   const [search, setSearch] = useState("");
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -44,6 +48,10 @@ export default function AdminBookingsPage() {
   useEffect(() => {
     load(true);
   }, [state, search]);
+
+  function onUpdated(updated: BookingItem) {
+    setRows((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+  }
 
   async function onVerify(id: number, verified: boolean) {
     const updated = await verifyBooking(id, verified);
@@ -147,7 +155,12 @@ export default function AdminBookingsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: Math.min(i, 12) * 0.02 }}
           >
-            <BookingRow b={b} onVerify={onVerify} />
+            <BookingRow
+              b={b}
+              onVerify={onVerify}
+              onEdit={setEditing}
+              onUpdated={onUpdated}
+            />
           </motion.div>
         ))}
       </div>
@@ -168,6 +181,13 @@ export default function AdminBookingsPage() {
           onCreated={(b) => setRows((prev) => [b, ...prev])}
         />
       )}
+      {editing && (
+        <EditBookingModal
+          booking={editing}
+          onClose={() => setEditing(null)}
+          onSaved={onUpdated}
+        />
+      )}
     </div>
   );
 }
@@ -175,9 +195,13 @@ export default function AdminBookingsPage() {
 function BookingRow({
   b,
   onVerify,
+  onEdit,
+  onUpdated,
 }: {
   b: BookingItem;
   onVerify: (id: number, v: boolean) => Promise<void>;
+  onEdit: (b: BookingItem) => void;
+  onUpdated: (b: BookingItem) => void;
 }) {
   const [busy, setBusy] = useState(false);
   const d = new Date(b.scheduled_at);
@@ -193,23 +217,50 @@ function BookingRow({
       ? "var(--success)"
       : b.state === "pending"
         ? "var(--warning)"
-        : "var(--ink-muted)";
+        : b.state === "cancelled"
+          ? "var(--danger)"
+          : "var(--ink-muted)";
 
   return (
     <TechFrame className="p-4">
       <div className="flex items-center gap-4 flex-wrap">
         <div className="min-w-44 flex-1">
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <span className="text-lg font-bold">{b.customer_name}</span>
             <span className="tech-label" style={{ color: "var(--ink-muted)" }}>
               age {b.customer_age}
             </span>
           </div>
+
           <div
             className="tech-label mt-0.5"
             style={{ color: "var(--ink-muted)" }}
           >
             {b.gun_category_name} · {b.shot_count} shots · {b.num_people}p
+          </div> */}
+
+          <div className="min-w-44 flex-1">
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-bold">{b.customer_name}</span>
+              <span
+                className="tech-label"
+                style={{ color: "var(--ink-muted)" }}
+              >
+                age {b.customer_age}
+              </span>
+            </div>
+            <div
+              className="tech-label mt-0.5"
+              style={{ color: "var(--ink-muted)" }}
+            >
+              {b.gun_category_name} · {b.shot_count} shots · {b.num_people}p
+            </div>
+            <div
+              className="tech-label mt-0.5"
+              style={{ color: "var(--ink-soft)" }}
+            >
+              📞 {b.customer_phone}
+            </div>
           </div>
         </div>
 
@@ -234,7 +285,7 @@ function BookingRow({
           </span>
         </div>
 
-        <div className="ml-auto flex items-center gap-2">
+        {/* <div className="ml-auto flex items-center gap-2">
           <span className="tech-label" style={{ color: "var(--ink-muted)" }}>
             {b.id_type}
           </span>
@@ -272,6 +323,90 @@ function BookingRow({
               style={{ background: "var(--accent)", color: "#fff" }}
             >
               {busy ? "…" : "Verify ID"}
+            </button>
+          )}
+        </div> */}
+        <div className="ml-auto flex items-center gap-2 flex-wrap justify-end">
+          <span className="tech-label" style={{ color: "var(--ink-muted)" }}>
+            {b.id_type}
+          </span>
+
+          {/* existing verify control */}
+          {b.id_verified ? (
+            <button
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true);
+                try {
+                  await onVerify(b.id, false);
+                } finally {
+                  setBusy(false);
+                }
+              }}
+              className="tech-label px-3 py-1.5 clip-corner"
+              style={{
+                border: "1px solid var(--success)",
+                color: "var(--success)",
+              }}
+            >
+              ✓ ID verified
+            </button>
+          ) : (
+            <button
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true);
+                try {
+                  await onVerify(b.id, true);
+                } finally {
+                  setBusy(false);
+                }
+              }}
+              className="tech-label px-3 py-1.5 clip-corner font-bold"
+              style={{ background: "var(--accent)", color: "#fff" }}
+            >
+              {busy ? "…" : "Verify ID"}
+            </button>
+          )}
+
+          {/* NEW: edit */}
+          <button
+            onClick={() => onEdit(b)}
+            className="tech-label px-3 py-1.5 clip-corner"
+            style={{
+              border: "1px solid var(--line)",
+              color: "var(--ink-soft)",
+            }}
+          >
+            Edit
+          </button>
+
+          {/* NEW: cancel (hidden if already cancelled) */}
+          {b.state !== "cancelled" && (
+            <button
+              disabled={busy}
+              onClick={async () => {
+                if (
+                  !confirm(
+                    `Cancel ${b.customer_name}'s booking? This removes it from revenue.`,
+                  )
+                )
+                  return;
+                setBusy(true);
+                try {
+                  const updated = await cancelBooking(b.id);
+                  onUpdated(updated);
+                } finally {
+                  setBusy(false);
+                }
+              }}
+              className="tech-label px-3 py-1.5 clip-corner"
+              style={{
+                border: "1px solid var(--danger)",
+                color: "var(--danger)",
+              }}
+            >
+              Cancel
             </button>
           )}
         </div>
