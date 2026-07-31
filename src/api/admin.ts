@@ -115,6 +115,8 @@ export interface BookingItem {
   shot_count: number;
   created_at: string;
   confirmed_at: string | null;
+  loyalty_discount_percent: number;
+  loyalty_discount_paise: number;
 }
 export async function fetchBookings(params: {
   state?: string;
