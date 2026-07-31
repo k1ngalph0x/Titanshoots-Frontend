@@ -17,16 +17,16 @@ export default function EditBookingModal({
   const [amount, setAmount] = useState(
     String(Math.round(booking.amount_paise / 100)),
   );
-  const [loyaltyPct, setLoyaltyPct] = useState(
-    booking.loyalty_discount_percent ?? 0,
-  );
+  // const [loyaltyPct, setLoyaltyPct] = useState(
+  //   booking.loyalty_discount_percent ?? 0,
+  // );
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const basePaise =
-    booking.amount_paise + (booking.loyalty_discount_paise ?? 0);
-  const previewDiscountPaise =
-    Math.round((basePaise * loyaltyPct) / 100 / 100) * 100;
-  const previewFinal = basePaise - previewDiscountPaise;
+  // const basePaise =
+  //   booking.amount_paise + (booking.loyalty_discount_paise ?? 0);
+  // const previewDiscountPaise =
+  //   Math.round((basePaise * loyaltyPct) / 100 / 100) * 100;
+  // const previewFinal = basePaise - previewDiscountPaise;
   const amountChanged =
     Number(amount) !== Math.round(booking.amount_paise / 100);
 
