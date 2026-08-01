@@ -11,6 +11,7 @@ import {
 import { api } from "../../api/client";
 import { fetchAnalytics, type Analytics } from "../../api/admin";
 import Card from "../../components/Card";
+import { useNavigate } from "react-router-dom";
 
 const RANGES = [
   { days: 7, label: "7 days" },
@@ -146,7 +147,7 @@ export default function AdminAnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [metric, setMetric] = useState<"revenue" | "games">("revenue");
-
+  const navigate = useNavigate();
   const reqRef = useRef(0);
 
   const load = useCallback(async (d: number) => {
@@ -425,7 +426,7 @@ export default function AdminAnalyticsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {cats.map((c) => {
+                  {/* {cats.map((c) => {
                     const share = catTotal
                       ? (c.revenue_paise / catTotal) * 100
                       : 0;
@@ -433,6 +434,68 @@ export default function AdminAnalyticsPage() {
                       <tr
                         key={c.category}
                         style={{ borderTop: "1px solid var(--line)" }}
+                      >
+                        <td className="py-3 pr-4" style={{ minWidth: 140 }}>
+                          <div className="font-medium">{c.category}</div>
+                          <div
+                            className="mt-1.5 h-1 w-full max-w-[200px]"
+                            style={{
+                              background: "var(--surface-dim)",
+                              borderRadius: 2,
+                            }}
+                          >
+                            <div
+                              className="h-full"
+                              style={{
+                                width: `${share}%`,
+                                background: "var(--accent)",
+                                borderRadius: 2,
+                              }}
+                            />
+                          </div>
+                        </td>
+                        <td className="py-3 text-right align-top" style={NUM}>
+                          {c.games}
+                        </td>
+                        <td className="py-3 text-right align-top" style={NUM}>
+                          {c.players}
+                        </td>
+                        <td
+                          className="py-3 text-right align-top font-semibold"
+                          style={NUM}
+                        >
+                          {rupees(c.revenue_paise)}
+                        </td>
+                        <td
+                          className="py-3 text-right align-top"
+                          style={{ ...NUM, color: "var(--ink-muted)" }}
+                        >
+                          {share.toFixed(0)}%
+                        </td>
+                      </tr>
+                    );
+                  })} */}
+                  {cats.map((c) => {
+                    const share = catTotal
+                      ? (c.revenue_paise / catTotal) * 100
+                      : 0;
+                    return (
+                      <tr
+                        key={c.category}
+                        onClick={() =>
+                          navigate(
+                            `/admin/category/${c.category_id}?name=${encodeURIComponent(c.category)}`,
+                          )
+                        }
+                        className="cursor-pointer transition-colors"
+                        style={{ borderTop: "1px solid var(--line)" }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.background =
+                            "var(--surface-dim)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.background = "transparent")
+                        }
                       >
                         <td className="py-3 pr-4" style={{ minWidth: 140 }}>
                           <div className="font-medium">{c.category}</div>

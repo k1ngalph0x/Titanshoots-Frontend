@@ -12,6 +12,7 @@ import AdminPricingPage from "./pages/admin/AdminPricingPage";
 import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
 import AdminAuditPage from "./pages/admin/AdminAuditPage";
 import AdminBookingsPage from "./pages/admin/AdminBookingsPage";
+import CategoryCustomersPage from "./pages/admin/AdminCategoryCustomersPage";
 import LandingPage from "./pages/LandingPage";
 
 function AdminRoutes() {
@@ -21,6 +22,10 @@ function AdminRoutes() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
+          <Route
+            path="category/:categoryId"
+            element={<CategoryCustomersPage />}
+          />
           <Route path="pricing" element={<AdminPricingPage />} />
           <Route path="analytics" element={<AdminAnalyticsPage />} />
           <Route path="audit" element={<AdminAuditPage />} />

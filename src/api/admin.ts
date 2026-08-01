@@ -176,6 +176,7 @@ export interface Analytics {
   players: number;
   by_method: Record<string, { count: number; revenue_paise: number }>;
   by_category: {
+    category_id: number;
     category: string;
     games: number;
     players: number;
@@ -186,6 +187,16 @@ export interface Analytics {
 export async function fetchAnalytics(days = 30): Promise<Analytics> {
   const { data } = await api.get<Analytics>("/admin/analytics", {
     params: { days },
+  });
+  return data;
+}
+
+export async function fetchBookingsByCategory(
+  categoryId: number,
+): Promise<BookingItem[]> {
+  const { data } = await api.get<BookingItem[]>("/admin/bookings", {
+    params: { category_id: categoryId, limit: 200 },
+    // params: { category_id: categoryId, state: "confirmed", limit: 200 },
   });
   return data;
 }
